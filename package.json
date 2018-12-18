@@ -20,6 +20,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://www.npmjs.com/package/vn-phone-validator"
+    "url": "https://github.com/tonghoai/vn-phone-validator"
   }
 }
