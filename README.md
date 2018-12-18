@@ -1,4 +1,4 @@
-# Dillinger
+# VN-PHONE-VALIDATE
 vn-phone-validator is a package support validate mobile phone number for five operator in Viet Nam, includes Viettel, Mobiphone, Vinaphone, Vietnamobile and Gmobile.
 
   - Compact
