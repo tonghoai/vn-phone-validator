@@ -20,26 +20,26 @@ $ npm i vn-phone-validator
 Validate phone number
 ```js
 const phoneValidate = require('vn-phone-validator')
-phoneValidate.validate('0988888888')    // true
-phoneValidate.validate('0988 888 888')  // true
-phoneValidate.validate('84988 888 888') // true
-phoneValidate.validate('0123456789')    // false
+phoneValidate.validate('0988888888').isValidate    // true
+phoneValidate.validate('0988 888 888').isValidate  // true
+phoneValidate.validate('84988 888 888').isValidate // true
+phoneValidate.validate('0123456789').isValidate    // false
 ```
 
 Options
 - strict: true/false
 ```js
-phoneValidate.validate('0988888888', {strict: true})   // true
-phoneValidate.validate('0988 888 888', {strict: true}) // false
+phoneValidate.validate('0988888888', {strict: true}).isValidate   // true
+phoneValidate.validate('0988 888 888', {strict: true}).isValidate // false
 ```
 - format: string
 ```js
-phoneValidate.validate('0988888888', {format: 'xxxx xxx xxx'})   // false
-phoneValidate.validate('0988888888', {format: '097xxxxxx8'})     // false
+phoneValidate.validate('0988888888', {format: 'xxxx xxx xxx'}).isValidate   // false
+phoneValidate.validate('0988888888', {format: '097xxxxxx8'}).isValidate     // false
 ```
 - operator: array (viettel, vinaphone, mobilephone, vietnamobile, gmobile)
 ```js
-phoneValidate.validate('0988888888', {operator: ['vietnamobile']})   // false
+phoneValidate.validate('0988888888', {operator: ['vietnamobile']}).isValidate   // false
 ```
 
 Special
