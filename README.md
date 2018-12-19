@@ -52,6 +52,11 @@ phoneValidate.validate('0123456789').operator()   // false
 ```js
 phoneValidate.validate('0988888888').hidden(4, '*') // 098888****
 ```
+- Format number
+```js
+phoneValidate.validate('0988888888').format('xxxx.xxx.xxx')  // 0988.888.888
+phoneValidate.validate('0988888888').format('84xxx xxx xxx') // 84988 888 888
+```
 
 ### Test
 

@@ -133,6 +133,21 @@ function hiddenPhoneNumber(phoneNumber, number, char) {
     return hiddenPhoneNumber
 }
 
+function formatPhoneNumberWithFormat(phoneNumber, format) {
+    let newArrayPhoneAfterFormat = []
+    const currentFormatToReverseArray = [...format].reverse()
+    const currentPhoneNumberToArray = [...phoneNumber]
+    for (let i = 0; i < currentFormatToReverseArray.length; i++) {
+        if (currentFormatToReverseArray[i] === 'x') {
+            newArrayPhoneAfterFormat.push(currentPhoneNumberToArray.pop())
+        } else {
+            newArrayPhoneAfterFormat.push(currentFormatToReverseArray[i])
+        }
+    }
+
+    return newArrayPhoneAfterFormat.reverse().join('')
+}
+
 phoneValidate.prototype.validate = function (phoneNumber, options = {}) {
     this.phoneNumber = phoneNumber
     this.isValidate = validatePhoneNumber(phoneNumber, options)
@@ -153,6 +168,16 @@ phoneValidate.prototype.hidden = function (number, char) {
     }
     const hidden = hiddenPhoneNumber(this.phoneNumber, number, char)
     return hidden
+}
+
+phoneValidate.prototype.format = function (strFormat) {
+    if (!this.isValidate) {
+        return false
+    }
+
+    const phoneNumber = this.phoneNumber.replace(/ /g, '')
+    const format = formatPhoneNumberWithFormat(phoneNumber, strFormat)
+    return format
 }
 
 module.exports = new phoneValidate()

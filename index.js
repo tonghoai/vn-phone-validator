@@ -149,6 +149,21 @@ function hiddenPhoneNumber(phoneNumber, number, char) {
     return hiddenPhoneNumber;
 }
 
+function formatPhoneNumberWithFormat(phoneNumber, format) {
+    var newArrayPhoneAfterFormat = [];
+    var currentFormatToReverseArray = [].concat(_toConsumableArray(format)).reverse();
+    var currentPhoneNumberToArray = [].concat(_toConsumableArray(phoneNumber));
+    for (var i = 0; i < currentFormatToReverseArray.length; i++) {
+        if (currentFormatToReverseArray[i] === 'x') {
+            newArrayPhoneAfterFormat.push(currentPhoneNumberToArray.pop());
+        } else {
+            newArrayPhoneAfterFormat.push(currentFormatToReverseArray[i]);
+        }
+    }
+
+    return newArrayPhoneAfterFormat.reverse().join('');
+}
+
 phoneValidate.prototype.validate = function (phoneNumber) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
@@ -171,6 +186,16 @@ phoneValidate.prototype.hidden = function (number, char) {
     }
     var hidden = hiddenPhoneNumber(this.phoneNumber, number, char);
     return hidden;
+};
+
+phoneValidate.prototype.format = function (strFormat) {
+    if (!this.isValidate) {
+        return false;
+    }
+
+    var phoneNumber = this.phoneNumber.replace(/ /g, '');
+    var format = formatPhoneNumberWithFormat(phoneNumber, strFormat);
+    return format;
 };
 
 module.exports = new phoneValidate();

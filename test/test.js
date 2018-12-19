@@ -1,5 +1,5 @@
 const expect = require('chai').expect
-const phoneValidate = require('../index')
+const phoneValidate = require('../src')
 
 const number1 = '0928499369'
 const number2 = '0928 499 369'
@@ -39,6 +39,14 @@ describe('# Tính hợp lệ của số điện thoại', function () {
         expect(phoneValidate.validate(number1, { strict: true }).isValidate).to.equal(true)
     })
 
+    it('Phải đúng với sử dụng format', function () {
+        expect(phoneValidate.validate(number2).format('xxx xxxx xxx')).to.equal('092 8499 369')
+    })
+
+    it('Phải đúng với sử dụng format có mã quốc gia', function () {
+        expect(phoneValidate.validate(number2).format('84xx xxxx xxx')).to.equal('8492 8499 369')
+    })
+
     it('Phải sai với số điện thoại khác 10, 11 chữ số', function () {
         expect(phoneValidate.validate(number8).isValidate).to.equal(false)
     })
@@ -63,11 +71,15 @@ describe('# Tính hợp lệ của số điện thoại', function () {
         expect(phoneValidate.validate(number10).isValidate).to.equal(false)
     })
 
-    it('Phải sai với số điện thoại dùng format() không khớp', function () {
+    it('Phải sai với số điện thoại dùng format không khớp', function () {
         expect(phoneValidate.validate(number11, { format: 'xxxx xxxx xx' }).isValidate).to.equal(false)
     })
 
-    it('Phải sai với số điện thoại dùng format() có số không khớp', function () {
+    it('Phải sai với số điện thoại dùng format có số không khớp', function () {
         expect(phoneValidate.validate(number12, { format: '092xxx xxx 8' }).isValidate).to.equal(false)
+    })
+
+    it('Phải sai với dùng format()', function () {
+        expect(phoneValidate.validate(number2).format('xxx xxxx xxx')).to.not.equal('0928499 369')
     })
 })
