@@ -1,183 +1,114 @@
-const VIETNAMOBILE = 'vietnamobile'
-const VIETTEL = 'viettel'
-const VINAPHONE = 'vinaphone'
-const MOBIPHONE = 'mobiphone'
-const GMOBILE = 'gmobile'
+const VIETNAMOBILE = 'vietnamobile';
+const VIETTEL = 'viettel';
+const VINAPHONE = 'vinaphone';
+const MOBIPHONE = 'mobiphone';
+const GMOBILE = 'gmobile';
+const ITELECOM = 'itelecom';
 
-const viettelPrefix = ['86', '96', '97', '98', '32', '33', '34', '35', '36', '37', '38', '39']
-const mobiphonePrefix = ['89', '90', '93', '70', '79', '77', '76', '78']
-const vinaphonePrefix = ['88', '91', '94', '83', '84', '85', '81', '82']
-const vietnamobilePrefix = ['92', '56', '58']
-const gmobilePrefix = ['99', '59']
+const viettelPrefix = ['86', '96', '97', '98', '32', '33', '34', '35', '36', '37', '38', '39'];
+const mobiphonePrefix = ['89', '90', '93', '70', '79', '77', '76', '78'];
+const vinaphonePrefix = ['88', '91', '94', '83', '84', '85', '81', '82'];
+const vietnamobilePrefix = ['92', '56', '58'];
+const gmobilePrefix = ['99', '59'];
+const itelecomPrefix = ['87'];
+const allPrefix = [...viettelPrefix, ...mobiphonePrefix, ...vinaphonePrefix, ...vietnamobilePrefix, ...gmobilePrefix, ...itelecomPrefix];
 
-function phoneValidate() {
-    this.phoneNumber = ''
-    this.isValidate = false
-    this.prefix = ''
-}
+const prefixOperator = {
+  [VIETNAMOBILE]: vietnamobilePrefix,
+  [VIETTEL]: viettelPrefix,
+  [VINAPHONE]: vinaphonePrefix,
+  [MOBIPHONE]: mobiphonePrefix,
+  [GMOBILE]: gmobilePrefix,
+  [ITELECOM]: itelecomPrefix,
+};
 
-function getPrefix(phoneNumber) {
-    let prefix = ''
-    const fourFirstNumber = phoneNumber.toString().substring(0, 4)
-    if (fourFirstNumber.indexOf('84') === 0) {
-        prefix = fourFirstNumber.substring(2, 5)
-    } else if (fourFirstNumber.indexOf('0') == 0) {
-        prefix = fourFirstNumber.substring(1, 3)
-    }
-    return prefix
-}
+class PhoneValidate {
+  constructor(phoneNumber) {
+    this.phoneNumber = phoneNumber;
+    this.purePhoneNumber = phoneNumber;
+    this.code = '';
+    this.prefix = '';
+    this.number = '';
+    this.isValidate = false;
+  }
 
-function validatePhoneNumber(phoneNumber, options = {}) {
-    const { strict, format, operator } = options
-    let allPrefix = [...viettelPrefix, ...mobiphonePrefix, ...vinaphonePrefix, ...vietnamobilePrefix, ...gmobilePrefix]
-    if (operator && typeof (operator) === 'object' && operator.length) {
-        allPrefix = getOptionPrefix(operator)
-    }
-    if (format && typeof (format) === 'string') {
-        return validatePhoneNumberWithFormat(phoneNumber, format)
-    }
-    const victimPhoneNumber = strict ? phoneNumber.toString() : phoneNumber.toString().replace(/ /g, '')
-    switch (victimPhoneNumber.length) {
-        case 10: {
-            for (let i = 0; i < allPrefix.length; i++) {
-                if (victimPhoneNumber.indexOf(`0${allPrefix[i]}`) === 0) {
-                    return true
-                }
-            }
-            return false
-        }
-        case 11: {
-            if (victimPhoneNumber.indexOf('84') === 0) {
-                for (let i = 0; i < allPrefix.length; i++) {
-                    if (victimPhoneNumber.indexOf(`84${allPrefix[i]}`) === 0) {
-                        return true
-                    }
-                }
-            }
-            return false
-        }
-        default: {
-            return false
-        }
-    }
-}
+  analysisPhone(phoneNumber = '') {
+    this.purePhoneNumber = phoneNumber;
+    this.phoneNumber = phoneNumber.replace(/((?!^)\+|\s|\.)/g, '');
+    const reg = /((084|0|84|\+84)(\d{2})(\d{7}))/;
+    const parse = this.phoneNumber.match(reg);
+    if (!parse) return false;
+    if (parse[0].length !== this.phoneNumber.length) return false;
 
-function validatePhoneNumberWithFormat(phoneNumber, format) {
-    const victimNumberFormatToArray = [...format.toString()]
-    const victimPhoneNumberToArray = [...phoneNumber.toString()]
-    if (victimNumberFormatToArray.length !== victimPhoneNumberToArray.length)
-        return false
+    this.code = parse[2];
+    this.prefix = parse[3];
+    this.number = parse[4];
 
-    for (let i = 0; i < victimNumberFormatToArray.length; i++) {
-        const currentNumberFormat = victimNumberFormatToArray[i]
-        const currentNumberPhone = victimPhoneNumberToArray[i]
-        if (!Number.isNaN(Number(currentNumberFormat))) {
-            if (currentNumberFormat !== currentNumberPhone)
-                return false
-        }
-    }
+    if (!allPrefix.includes(this.prefix)) return false;
+    return true;
+  }
 
-    return true
-}
+  validateStrict() {
+    const replaceSpecialPhoneNumber = this.purePhoneNumber.replace(/((?!^)\+|\D)/g, '');
+    return this.purePhoneNumber === replaceSpecialPhoneNumber;
+  }
 
-function getOptionPrefix(prefixs) {
-    let currentAllPrefix = []
-    for (let i = 0; i < prefixs.length; i++) {
-        switch (prefixs[i]) {
-            case VIETTEL: {
-                currentAllPrefix = [...currentAllPrefix, ...viettelPrefix]
-                break
-            }
-            case MOBIPHONE: {
-                currentAllPrefix = [...currentAllPrefix, ...mobiphonePrefix]
-                break
-            }
-            case VINAPHONE: {
-                currentAllPrefix = [...currentAllPrefix, ...vinaphonePrefix]
-                break
-            }
-            case VIETNAMOBILE: {
-                currentAllPrefix = [...currentAllPrefix, ...vietnamobilePrefix]
-                break
-            }
-            case GMOBILE: {
-                currentAllPrefix = [...currentAllPrefix, ...gmobilePrefix]
-                break
-            }
-        }
-    }
-    return currentAllPrefix
-}
+  validateFormat(formatSchema) {
+    const formatSchemaRegex = new RegExp(formatSchema.replace(/x/g, '\\d'));
+    return formatSchemaRegex.test(this.purePhoneNumber);
+  }
 
-function returnPrefix(phoneNumber) {
-    let prefixName = ''
-    const prefix = getPrefix(phoneNumber)
-    if (viettelPrefix.indexOf(prefix) !== -1) {
-        prefixName = VIETTEL
-    } else if (mobiphonePrefix.indexOf(prefix) !== -1) {
-        prefixName = MOBIPHONE
-    } else if (vinaphonePrefix.indexOf(prefix) !== -1) {
-        prefixName = VINAPHONE
-    } else if (vietnamobilePrefix.indexOf(prefix) !== -1) {
-        prefixName = VIETNAMOBILE
-    } else if (gmobilePrefix.indexOf(prefix) !== -1) {
-        prefixName = GMOBILE
-    }
-    return prefixName
-}
+  validateOperator(operators) {
+    const currentPrefixOperators = operators.reduce((acc, c) => ([...acc, ...(prefixOperator[c] ? prefixOperator[c] : [])], []));
+    return currentPrefixOperators.includes(this.prefix);
+  }
 
-function hiddenPhoneNumber(phoneNumber, number, char) {
-    const currentNumber = number || 3
-    const currentChar = char || '*'
-    const hiddenPhoneNumber = phoneNumber.substring(0, phoneNumber.length - Number(currentNumber)) + Array(Number(currentNumber)).fill(currentChar).join('')
-    return hiddenPhoneNumber
-}
+  validate(options = {}) {
+    const { strict, format, operator } = options;
+    this.isValidate = this.analysisPhone(this.phoneNumber);
+    if (strict) this.isValidate = this.validateStrict();
+    if (format) this.isValidate = this.validateFormat(format);
+    if (operator) this.isValidate = this.validateOperator(operators);
+    return this.isValidate;
+  }
 
-function formatPhoneNumberWithFormat(phoneNumber, format) {
-    let newArrayPhoneAfterFormat = []
-    const currentFormatToReverseArray = [...format].reverse()
-    const currentPhoneNumberToArray = [...phoneNumber]
+  operator() {
+    if (!this.analysisPhone(this.phoneNumber)) return null;
+    if (viettelPrefix.includes(this.prefix)) return VIETTEL;
+    else if (vietnamobilePrefix.includes(this.prefix)) return VIETNAMOBILE;
+    else if (vinaphonePrefix.includes(this.prefix)) return VINAPHONE;
+    else if (mobiphonePrefix.includes(this.prefix)) return MOBIPHONE;
+    else if (gmobilePrefix.includes(this.prefix)) return GMOBILE;
+    else if (itelecomPrefix.includes(this.prefix)) return ITELECOM;
+    else return '';
+  }
+
+  hidden(num, character) {
+    if (!this.analysisPhone(this.phoneNumber)) return null;
+    const regString = `.{${num}}$`;
+    const reg = new RegExp(regString);
+    const characterFill = new Array(num).fill(character).join('');
+    return this.phoneNumber.replace(reg, characterFill);
+  }
+
+  format(schemaString) {
+    if (!this.analysisPhone(this.phoneNumber)) return null;
+    let newArrayPhoneAfterFormat = [];
+    const currentFormatToReverseArray = [...schemaString].reverse();
+    const currentPhoneNumberToArray = [...this.phoneNumber];
     for (let i = 0; i < currentFormatToReverseArray.length; i++) {
-        if (currentFormatToReverseArray[i] === 'x') {
-            newArrayPhoneAfterFormat.push(currentPhoneNumberToArray.pop())
-        } else {
-            newArrayPhoneAfterFormat.push(currentFormatToReverseArray[i])
-        }
+      if (currentFormatToReverseArray[i] === 'x') {
+        newArrayPhoneAfterFormat.push(currentPhoneNumberToArray.pop());
+      } else {
+        newArrayPhoneAfterFormat.push(currentFormatToReverseArray[i]);
+      }
     }
 
-    return newArrayPhoneAfterFormat.reverse().join('')
+    return newArrayPhoneAfterFormat.reverse().join('');
+  }
 }
 
-phoneValidate.prototype.validate = function (phoneNumber, options = {}) {
-    this.phoneNumber = phoneNumber
-    this.isValidate = validatePhoneNumber(phoneNumber, options)
-    return this
-}
-
-phoneValidate.prototype.operator = function () {
-    if (!this.isValidate) {
-        return false
-    }
-    const operator = returnPrefix(this.phoneNumber)
-    return operator
-}
-
-phoneValidate.prototype.hidden = function (number, char) {
-    if (!this.isValidate) {
-        return false
-    }
-    const hidden = hiddenPhoneNumber(this.phoneNumber, number, char)
-    return hidden
-}
-
-phoneValidate.prototype.format = function (strFormat) {
-    if (!this.isValidate) {
-        return false
-    }
-
-    const phoneNumber = this.phoneNumber.replace(/ /g, '')
-    const format = formatPhoneNumberWithFormat(phoneNumber, strFormat)
-    return format
-}
-
-module.exports = new phoneValidate()
+module.exports = (phoneNumber) => {
+  const phoneValidate = new PhoneValidate(phoneNumber);
+  return phoneValidate;
+};
