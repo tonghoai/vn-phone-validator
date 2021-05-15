@@ -20,7 +20,7 @@ var ITELECOM = 'itelecom';
 var viettelPrefix = ['86', '96', '97', '98', '32', '33', '34', '35', '36', '37', '38', '39'];
 var mobiphonePrefix = ['89', '90', '93', '70', '79', '77', '76', '78'];
 var vinaphonePrefix = ['88', '91', '94', '83', '84', '85', '81', '82'];
-var vietnamobilePrefix = ['92', '56', '58'];
+var vietnamobilePrefix = ['92', '56', '58', '52'];
 var gmobilePrefix = ['99', '59'];
 var itelecomPrefix = ['87'];
 var allPrefix = [].concat(viettelPrefix, mobiphonePrefix, vinaphonePrefix, vietnamobilePrefix, gmobilePrefix, itelecomPrefix);
@@ -89,7 +89,7 @@ var PhoneValidate = function () {
       this.isValidate = this.analysisPhone(this.phoneNumber);
       if (strict) this.isValidate = this.validateStrict();
       if (format) this.isValidate = this.validateFormat(format);
-      if (operator) this.isValidate = this.validateOperator(operators);
+      if (operator) this.isValidate = this.validateOperator(operator);
       return this.isValidate;
     }
   }, {

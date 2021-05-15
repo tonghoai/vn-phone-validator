@@ -8,7 +8,7 @@ const ITELECOM = 'itelecom';
 const viettelPrefix = ['86', '96', '97', '98', '32', '33', '34', '35', '36', '37', '38', '39'];
 const mobiphonePrefix = ['89', '90', '93', '70', '79', '77', '76', '78'];
 const vinaphonePrefix = ['88', '91', '94', '83', '84', '85', '81', '82'];
-const vietnamobilePrefix = ['92', '56', '58'];
+const vietnamobilePrefix = ['92', '56', '58', '52'];
 const gmobilePrefix = ['99', '59'];
 const itelecomPrefix = ['87'];
 const allPrefix = [...viettelPrefix, ...mobiphonePrefix, ...vinaphonePrefix, ...vietnamobilePrefix, ...gmobilePrefix, ...itelecomPrefix];
@@ -68,7 +68,7 @@ class PhoneValidate {
     this.isValidate = this.analysisPhone(this.phoneNumber);
     if (strict) this.isValidate = this.validateStrict();
     if (format) this.isValidate = this.validateFormat(format);
-    if (operator) this.isValidate = this.validateOperator(operators);
+    if (operator) this.isValidate = this.validateOperator(operator);
     return this.isValidate;
   }
 
